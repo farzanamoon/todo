@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import Task from './entities/task.entity';
@@ -7,7 +11,7 @@ import Task from './entities/task.entity';
 export class TasksService {
   async create(createTaskDto: CreateTaskDto) {
     try {
-      const { description, summary } = createTaskDto;
+      const { summary, description } = createTaskDto;
       await Task.create({ summary, description });
       return { message: 'This action adds a new task' };
     } catch (error) {
@@ -23,11 +27,27 @@ export class TasksService {
     return `This action returns a #${id} task`;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `Updated task #${id}`;
+  async update(id: number, updateTaskDto: UpdateTaskDto) {
+    const task = await Task.findByPk(id);
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    const { summary, description } = updateTaskDto;
+
+    await task.update({
+      summary,
+      description,
+    });
+    return { message: 'Task updated successfully' };
   }
 
-  remove(id: number) {
+  async remove(id: number) {
+    const task = await Task.findByPk(id);
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
     return `This action removes a #${id} task`;
   }
 }
