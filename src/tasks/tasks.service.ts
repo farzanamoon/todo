@@ -10,21 +10,25 @@ import Task from './entities/task.entity';
 @Injectable()
 export class TasksService {
   async create(createTaskDto: CreateTaskDto) {
-    try {
-      const { summary, description } = createTaskDto;
-      await Task.create({ summary, description });
-      return { message: 'This action adds a new task' };
-    } catch (error) {
-      throw new BadRequestException(error?.errors?.[0]?.message || error);
-    }
+    const { summary, description } = createTaskDto;
+    await Task.create({ summary, description });
+    return { message: 'This action adds a new task' };
   }
 
-  findAll() {
+  async findAll() {
+    await Task.findAll({});
     return `This action returns all tasks`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: number) {
+    const task = await Task.findByPk(id, {});
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+    return {
+      message: 'Tasks: ',
+      data: task,
+    };
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto) {
@@ -48,6 +52,6 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
 
-    return `This action removes a #${id} task`;
+    return `This action removes a task`;
   }
 }
