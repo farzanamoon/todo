@@ -16,8 +16,7 @@ export class TasksService {
   }
 
   async findAll() {
-    await Task.findAll({});
-    return `This action returns all tasks`;
+    return await Task.findAll({});
   }
 
   async findOne(id: number) {
@@ -26,7 +25,7 @@ export class TasksService {
       throw new NotFoundException('Task not found');
     }
     return {
-      message: 'Tasks: ',
+      message: 'Tasks:',
       data: task,
     };
   }

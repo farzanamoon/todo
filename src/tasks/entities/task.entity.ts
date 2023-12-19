@@ -27,9 +27,9 @@ class Task extends Model<Task> {
   @Column
   'description': string;
 
-  @AllowNull
-  @Column
-  'completed_at': Date;
+  // @AllowNull
+  // @Column
+  // 'completed_at': Date;
 
   @CreatedAt
   @Column({ field: 'created_at' })
